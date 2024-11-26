@@ -4,61 +4,61 @@ networks:
 volumes:
   mongodb:
   redis:
-  mysql:
   rabbitmq:
+  mysql:
 services:
   mongodb:
-    image: joindevops/mongodb:v1
+    image: rameshm1/mongodb:latest
     container_name: mongodb
     networks:
       - roboshop
     volumes:
-    - source: mongodb
-      target: /data/db
-      type: volume
+      - source: mongodb
+        target: /data/db
+        type: volume
   catalogue:
-    image: joindevops/catalogue:v1
+    image: rameshm1/catalogue:latest
     container_name: catalogue
     networks:
-    - roboshop
+      - roboshop
     depends_on:
-    - mongodb
+      - mongodb
   redis:
     image: redis
     container_name: redis
     networks:
       - roboshop
     volumes:
-    - source: redis
-      target: /data
-      type: volume
+      - source: redis
+        target: /data
+        type: volume
   user:
-    image: joindevops/user:v1
+    image: rameshm1/user:latest
     container_name: user
     networks:
       - roboshop
-    depends_on:
-      - mongodb
+    depends_on: 
       - redis
+      - mongodb
   cart:
-    image: joindevops/cart:v1
+    image: rameshm1/cart:latest
     container_name: cart
     networks:
       - roboshop
     depends_on:
-      - redis
       - catalogue
+      - redis
   mysql:
-    image: joindevops/mysql:v1
+    image: rameshm1/mysql
     container_name: mysql
     networks:
       - roboshop
     volumes:
-    - source: mysql
-      target: /var/lib/mysql
-      type: volume
+      - source: mysql
+        target: /var/lib/mysql
+        type: volume
   shipping:
-    image: joindevops/shipping:v1
+    image: rameshm1/shipping
     container_name: shipping
     networks:
       - roboshop
@@ -70,15 +70,15 @@ services:
     container_name: rabbitmq
     networks:
       - roboshop
-    volumes:
-    - source: rabbitmq
-      target: /var/lib/rabbitmq
-      type: volume
     environment:
-    - RABBITMQ_DEFAULT_USER=roboshop
-    - RABBITMQ_DEFAULT_PASS=roboshop123
+      - RABBITMQ_DEFAULT_USER=roboshop
+      - RABBITMQ_DEFAULT_PASS=roboshop123
+    volumes:
+      - source: rabbitmq
+        target: /var/lib/rabbitmq
+        type: volume
   payment:
-    image: joindevops/payment:v1
+    image: rameshm1/payment
     container_name: payment
     networks:
       - roboshop
@@ -86,16 +86,18 @@ services:
       - cart
       - user
       - rabbitmq
+
   web:
-    image: joindevops/web:v1
+    image: rameshm1/web
     container_name: web
     networks:
-    - roboshop
+      - roboshop
     ports:
-    - "80:80"
+      - '80:80'
     depends_on:
-    - catalogue
-    - user
-    - cart
-    - shipping
-    - payment
+      - catalogue
+      - user
+      - cart
+      - shipping
+      - payment
+
